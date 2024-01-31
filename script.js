@@ -1,178 +1,184 @@
-//References
-let timeLeft = document.querySelector(".time-left");
-let quizContainer = document.getElementById("container");
-let nextBtn = document.getElementById("next-button");
-let countOfQuestion = document.querySelector(".number-of-question");
-let displayContainer = document.getElementById("display-container");
-let scoreContainer = document.querySelector(".score-container");
-let restart = document.getElementById("restart");
-let userScore = document.getElementById("user-score");
-let startScreen = document.querySelector(".start-screen");
-let startButton = document.getElementById("start-button");
-let questionCount;
-let scoreCount = 0;
-let count = 11;
-let countdown;
+const bar=document.getElementById('bar');
+const close=document.getElementById('close');
+const nav=document.getElementById('navbar')
 
-//Questions and Options array
-
-const quizArray = [
-  {
-    id: "0",
-    question: "Which is the most widely spoken language in the world?",
-    options: ["Spanish", "Mandarin", "English", "German"],
-    correct: "Mandarin",
-  },
-  {
-    id: "1",
-    question: "Which is the only continent in the world without a desert?",
-    options: ["North America", "Asia", "Africa", "Europe"],
-    correct: "Europe",
-  },
-  {
-    id: "2",
-    question: "Who invented Computer?",
-    options: ["Charles Babbage", "Henry Luce", "Henry Babbage", "Charles Luce"],
-    correct: "Charles Babbage",
-  },
-];
-
-//Restart Quiz
-restart.addEventListener("click", () => {
-  initial();
-  displayContainer.classList.remove("hide");
-  scoreContainer.classList.add("hide");
-});
-
-//Next Button
-nextBtn.addEventListener(
-  "click",
-  (displayNext = () => {
-    //increment questionCount
-    questionCount += 1;
-    //if last question
-    if (questionCount == quizArray.length) {
-      //hide question container and display score
-      displayContainer.classList.add("hide");
-      scoreContainer.classList.remove("hide");
-      //user score
-      userScore.innerHTML =
-        "Your score is " + scoreCount + " out of " + questionCount;
-    } else {
-      //display questionCount
-      countOfQuestion.innerHTML =
-        questionCount + 1 + " of " + quizArray.length + " Question";
-      //display quiz
-      quizDisplay(questionCount);
-      count = 11;
-      clearInterval(countdown);
-      timerDisplay();
-    }
-  })
-);
-
-//Timer
-const timerDisplay = () => {
-  countdown = setInterval(() => {
-    count--;
-    timeLeft.innerHTML = `${count}s`;
-    if (count == 0) {
-      clearInterval(countdown);
-      displayNext();
-    }
-  }, 1000);
-};
-
-//Display quiz
-const quizDisplay = (questionCount) => {
-  let quizCards = document.querySelectorAll(".container-mid");
-  //Hide other cards
-  quizCards.forEach((card) => {
-    card.classList.add("hide");
-  });
-  //display current question card
-  quizCards[questionCount].classList.remove("hide");
-};
-
-//Quiz Creation
-function quizCreator() {
-  //randomly sort questions
-  quizArray.sort(() => Math.random() - 0.5);
-  //generate quiz
-  for (let i of quizArray) {
-    //randomly sort options
-    i.options.sort(() => Math.random() - 0.5);
-    //quiz card creation
-    let div = document.createElement("div");
-    div.classList.add("container-mid", "hide");
-    //question number
-    countOfQuestion.innerHTML = 1 + " of " + quizArray.length + " Question";
-    //question
-    let question_DIV = document.createElement("p");
-    question_DIV.classList.add("question");
-    question_DIV.innerHTML = i.question;
-    div.appendChild(question_DIV);
-    //options
-    div.innerHTML += `
-    <button class="option-div" onclick="checker(this)">${i.options[0]}</button>
-     <button class="option-div" onclick="checker(this)">${i.options[1]}</button>
-      <button class="option-div" onclick="checker(this)">${i.options[2]}</button>
-       <button class="option-div" onclick="checker(this)">${i.options[3]}</button>
-    `;
-    quizContainer.appendChild(div);
-  }
+if(bar){
+    bar.addEventListener('click',()=>{
+        nav.classList.add('active');
+    })
+}
+if(close){
+    close.addEventListener('click',()=>{
+        nav.classList.remove('active')
+    })
 }
 
-//Checker Function to check if option is correct or not
-function checker(userOption) {
-  let userSolution = userOption.innerText;
-  let question =
-    document.getElementsByClassName("container-mid")[questionCount];
-  let options = question.querySelectorAll(".option-div");
 
-  //if user clicked answer == correct option stored in object
-  if (userSolution === quizArray[questionCount].correct) {
-    userOption.classList.add("correct");
-    scoreCount++;
-  } else {
-    userOption.classList.add("incorrect");
-    //For marking the correct option
-    options.forEach((element) => {
-      if (element.innerText == quizArray[questionCount].correct) {
-        element.classList.add("correct");
-      }
+
+
+/* Image Filter Section */
+
+const allFilterItems = document.querySelectorAll('.filter-item');
+const allFilterBtns = document.querySelectorAll('.filter-btn');
+
+window.addEventListener('DOMContentLoaded', () => {
+    allFilterBtns[1].classList.add('active-btn');
+});
+
+allFilterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+        showFilteredContent(btn);
     });
-  }
-
-  //clear interval(stop timer)
-  clearInterval(countdown);
-  //disable all options
-  options.forEach((element) => {
-    element.disabled = true;
-  });
-}
-
-//initial setup
-function initial() {
-  quizContainer.innerHTML = "";
-  questionCount = 0;
-  scoreCount = 0;
-  count = 11;
-  clearInterval(countdown);
-  timerDisplay();
-  quizCreator();
-  quizDisplay(questionCount);
-}
-
-//when user click on start button
-startButton.addEventListener("click", () => {
-  startScreen.classList.add("hide");
-  displayContainer.classList.remove("hide");
-  initial();
 });
 
-//hide quiz and display start screen
-window.onload = () => {
-  startScreen.classList.remove("hide");
-  displayContainer.classList.add("hide");
-};
+function showFilteredContent(btn){
+    allFilterItems.forEach((item) => {
+        if(item.classList.contains(btn.id)){
+            resetActiveBtn();
+            btn.classList.add('active-btn');
+            item.style.display = "block";
+        } else {
+            item.style.display = "none";
+        }
+    });
+}
+
+function resetActiveBtn(){
+    allFilterBtns.forEach((btn) => {
+        btn.classList.remove('active-btn');
+    });
+}
+
+
+/* Shopping Cart Section */
+if (document.readyState == 'loading'){
+    document.addEventListener('DOMContentLoaded' , ready);
+}
+
+else{
+    ready();
+}
+
+
+ function ready(){
+    var removeCartItemButton = document.getElementsByClassName('btn-danger');
+    for (var i = 0 ; i < removeCartItemButton.length; i++){
+        var button = removeCartItemButton[i];
+        button.addEventListener('click', removeCartItem)
+    }
+
+    var quantityInputs = document.getElementsByClassName('cart-quantity-input');
+    for(var i = 0 ;i < quantityInputs.length ; i++){
+        var input = quantityInputs[i];
+        input.addEventListener('change', quantityChanged);
+    }
+    
+    var addToCartButtons = document.getElementsByClassName('shop-item-button');
+    for(var i = 0; i< addToCartButtons.length; i++){
+        var button = addToCartButtons[i];
+        button.addEventListener('click',addToCartClicked)
+    }
+
+    document.getElementsByClassName('btn-purchase')[0].addEventListener('click', purchaseClicked)
+ }
+
+
+ function purchaseClicked(){
+     alert('Thank you for your purchase!!!');
+     var cartItems = document.getElementsByClassName('cart-items')[0];
+     while(cartItems.hasChildNodes()){
+         cartItems.removeChild(cartItems.firstChild)
+     }
+     updateCartTotal();
+ }
+
+function removeCartItem(event){
+    var buttonClicked = event.target;
+    buttonClicked.parentElement.parentElement.remove();
+    updateCartTotal();
+    
+}
+
+function  quantityChanged(event){
+    var input = event.target;
+    if(isNaN(input.value) || input.value <= 0 ){
+        input.value = 1;
+    }
+    updateCartTotal();
+}
+
+
+function addToCartClicked(event){
+    var button = event.target;
+    var shopItem = button.parentElement.parentElement;
+    var title = shopItem.getElementsByClassName('shop-item-title')[0].innerText;
+    var price = shopItem.getElementsByClassName('shop-item-price')[0].innerText;
+    var imageSrc = shopItem.getElementsByClassName('shop-item-image')[0].src;
+    addItemToCart(title,price,imageSrc);
+    updateCartTotal();
+}
+
+function addItemToCart(title, price, imageSrc){
+    var cartRow = document.createElement('tr');
+    cartRow.classList.add('cart-row');
+    var cartItems = document.getElementsByClassName('cart-items')[0];
+    var cartItemNames = cartItems.getElementsByClassName('cart-item-title');
+
+    for (i = 0; i< cartItemNames.length ; i++){
+        if(cartItemNames[i].innerText == title){
+            alert('This item already has added to the cart!');
+            return
+        }
+    }
+    var cartRowContents = `
+
+        <td class="cart-item cart-column">
+            <img class="cart-item-image" src="${imageSrc}" width="50" height="50">
+            <span class="cart-item-title">${title}</span>                  
+        </td>
+        <td class="cart-item cart-column">
+            <span class="cart-price cart-column">${price}</span>
+        </td>
+        <td class="cart-item cart-column">
+            <input class="cart-quantity-input" type="number" value="1" style="width: 50px">
+            <button class="btn btn-danger" type="button">Remove</button>
+        </td>        
+    `;
+     
+            
+    cartRow.innerHTML = cartRowContents;
+    cartItems.append(cartRow);
+    cartRow.getElementsByClassName('btn-danger')[0].addEventListener('click', removeCartItem);
+    cartRow.getElementsByClassName('cart-quantity-input')[0].addEventListener('change', quantityChanged)
+}
+
+
+function updateCartTotal(){
+    var cartItemContainer = document.getElementsByClassName('cart-items')[0];
+    var cartRows = cartItemContainer.getElementsByClassName('cart-row');
+    var total = 0;
+    for (var i = 0 ; i< cartRows.length ; i++){
+        var cartRow =cartRows[i];
+        var priceElement = cartRow.getElementsByClassName('cart-price')[0];
+        var quantityElement = cartRow.getElementsByClassName('cart-quantity-input')[0];
+        var price = parseFloat(priceElement.innerText.replace('R ' , ''))
+        var quantity = quantityElement.value;
+        total = total + (price * quantity);
+         
+    }
+    total = Math.round(total * 100 )/100;
+    document.getElementsByClassName('cart-total-price')[0].innerText = 'R '+ total + '.00';
+ 
+}
+
+const hamBurgerBtn = document.getElementById('hamBurger');
+hamBurgerBtn.addEventListener('click', function () {
+    const responsiveRight = document.querySelector('.responsive')
+    hamBurgerBtn.classList.toggle('active')
+    if (hamBurgerBtn.classList.contains('active')) {
+        responsiveRight.classList.add('active')
+    }
+    else {
+        responsiveRight.classList.remove('active')
+    }
+})
